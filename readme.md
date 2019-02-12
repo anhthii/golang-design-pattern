@@ -1,5 +1,12 @@
 # Design pattern
 
+### References:
+- [GitHub - tmrts/go-patterns: Curated list of Go design patterns, recipes and idioms](https://github.com/tmrts/go-patterns)
+- [How important are Design Patterns really? - Stack Overflow](https://stackoverflow.com/a/978509)
+- [Evaluating the GO Programming Language with Design Patterns PDF](https://ecs.victoria.ac.nz/foswiki/pub/Main/TechnicalReportSeries/ECSTR11-01.pdf)
+- [Tutorials · Software adventures and thoughts](http://blog.ralch.com/tutorial/)
+- [Software design pattern - Wikipedia](https://en.wikipedia.org/wiki/Software_design_pattern)
+
 ### Design pattern là gì:
 - **Định nghĩa**: Là  giải pháp tổng thể cho những vấn đề phổ biến mà chúng ta hay găp đi lặp lại trong thiết kế phần mềm. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
 
@@ -282,10 +289,5 @@ for  entity := range animals {
 Reference: [Design Patterns Explained: Adapter Pattern With Code Examples - DZone Java](https://dzone.com/articles/design-patterns-explained-adapter-pattern-with-cod)
 
 ---
-## Other references:
-- [GitHub - tmrts/go-patterns: Curated list of Go design patterns, recipes and idioms](https://github.com/tmrts/go-patterns)
-- [How important are Design Patterns really? - Stack Overflow](https://stackoverflow.com/a/978509)
-- [Evaluating the GO Programming Language with Design Patterns] PDF (https://ecs.victoria.ac.nz/foswiki/pub/Main/TechnicalReportSeries/ECSTR11-01.pdf)
-- [Tutorials · Software adventures and thoughts](http://blog.ralch.com/tutorial/)
-- [Software design pattern - Wikipedia](https://en.wikipedia.org/wiki/Software_design_pattern)
+
 
