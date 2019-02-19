@@ -6,6 +6,7 @@
 - [Evaluating the GO Programming Language with Design Patterns PDF](https://ecs.victoria.ac.nz/foswiki/pub/Main/TechnicalReportSeries/ECSTR11-01.pdf)
 - [Tutorials · Software adventures and thoughts](http://blog.ralch.com/tutorial/)
 - [Software design pattern - Wikipedia](https://en.wikipedia.org/wiki/Software_design_pattern)
+- https://www.oodesign.com/proxy-pattern.html
 
 ### Design pattern là gì:
 - **Định nghĩa**: Là  giải pháp tổng thể cho những vấn đề phổ biến mà chúng ta hay găp đi lặp lại trong thiết kế phần mềm. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
@@ -35,12 +36,9 @@
     | Pattern | Mô tả | Status |
     |:-------:|:----------- |:------:|
     | [Adapter](#Adapter) | Cho phép các interface không liên quan đến nhau có thể làm việc cùng nhau  | ✔ |
-    | [Bridge]() |  | ✘ |
-    | [Composite]() | | ✘ |
-    | [Decorator]() |  | ✘ |
-    | [Facade]() |  | ✘ |
-    | [Flyweight]() |  | ✘ |
-     | [Proxy]() |  | ✘ |
+    | [Bridge](#Bridge) | Tách 1 class lớp thành 2 phần interface và reprensentation để 2 phần này không bị phụ thuộc vào nhau và có thể được phát triển song song | ✔ |
+    | [Composite](#Composite) |cho phép tương tác với tất cả các đối tượng tương tự nhau giống như là 1 đối tượng đơn hoặc 1 nhóm các đối tượng | ✔ |
+     | [Proxy](#Proxy) | Cung cấp một đại diện cho một đối tượng để điều khiển việc truy nhập đối tượng đó | ✔ |
 - #### Behavioral pattern
 ---
   
@@ -51,18 +49,16 @@
     - Khi chúng ta cần hạn chế sự truy cập đến một vài biến số, chúng ta sử dụng mẫu singleton là trung gian để truy cập biến này
     
 ```go
-package singleton
-
-type singleton struct {}
+package DB
 
 var (
   once sync.Once
-  instance *singleton
+  singleton *db.Connection
 )
 
-func GetInstance() *singleton  {
+func GetDBConnection(config *mysql.Config) *db.Connection {
   once.Do(func() {
-    instance  = make(singleton)
+    singleton  = mysql.Dial(config)
   })
   return singleton
 }
@@ -289,5 +285,214 @@ for  entity := range animals {
 Reference: [Design Patterns Explained: Adapter Pattern With Code Examples - DZone Java](https://dzone.com/articles/design-patterns-explained-adapter-pattern-with-cod)
 
 ---
+### Composite
+- cho phép tương tác với tất cả các đối tượng tương tự nhau giống như là 1 đối tượng đơn hoặc 1 nhóm các đối tượng
 
+- Hình dung: Đối tượng File sẽ là 1 đối tượng đơn nếu bên trong nó không có file nào khác, nhưng đối tượng file sẽ được đối xử giống như 1 collection nếu bên trong nó lại có những File khác.
+
+- Sơ đồ:
+![332b7bd4.png](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Composite_UML_class_diagram_%28fixed%29.svg/600px-Composite_UML_class_diagram_%28fixed%29.svg.png)
+- Cấu trúc:
+  - **Component** (Thành phần):
+    - Khai báo interface hoặc abstract chung cho các thành phần đối tượng.
+    - Chứa các method thao tác chung của các thành phần đối tượng.
+  - **Leaf** (Lá):
+    - Biểu diễn các đối tượng lá (ko có con) trong thành phần đối tượng.
+  - **Composite** (Hỗn hợp):
+    - Định nghĩa một thao tác cho các thành phần có thành phần con.
+    - Lưu trữ và quản lý các thành phần con
+
+- Ví dụ khác: Khi vẽ, chúng ta được cung cấp các đối tượng Square, Circle, các đối tượng này đều là Shape. Giả sử chúng ta muốn vẽ nhiều loại hình cùng 1 lúc chúng ta sẽ tạo một Layer chứa các Shape này và thực hiện vòng lặp để vẽ chúng. Ở đây composite được hiểu là chúng ta có thể sử dụng các đối tượng Square, Circle riêng biệt nhưng khi cần chúng ta có thể gom chúng lại thành 1 nhóm
+```go
+// Shape is the component
+type Shape interface {
+	Draw(drawer *Drawer) error
+}
+
+// Square and Circle are leaves
+type Square struct {
+	Location Point
+	Size float64
+}
+
+func (square *Square) Draw(drawer *Drawer) error {
+	return drawer.DrawRect(Rect{
+		Location: square.Location,
+		Size: Size{
+			Height: square.Side,
+			Width:  square.Side,
+		},
+	})
+}
+
+type Circle struct {
+	Center Point
+	Radius float64
+}
+
+func (circle *Circle) Draw(drawer *Drawer) error {
+	rect := Rect{
+		Location: Point{
+			X: circle.Center.X - circle.Radius,
+			Y: circle.Center.Y - circle.Radius,
+		},
+		Size: Size{
+			Width:  2 * circle.Radius,
+			Height: 2 * circle.Radius,
+		},
+	}
+
+	return drawer.DrawEllipseInRect(rect)
+}
+
+// Layer is the composite
+type Layer struct {
+	Shapes []Shape
+}
+
+func (layer *Layer) Draw(drawer *Drawer) error {
+	for _, shape := range layer.Shapes {
+		if err := shape.Draw(drawer); err != nil {
+			return err
+		}
+		fmt.Println()
+	}
+
+	return nil
+}
+
+// usage
+circle := &photoshop.Circle{
+	Center: photoshop.Point{X: 100, Y: 100},
+	Radius: 50,
+}
+
+square := &photoshop.Square{
+	Location: photoshop.Point{X: 50, Y: 50},
+	Side:     20,
+}
+
+layer := &photoshop.Layer{
+	Elements: []photoshop.Shapes{
+		circle,
+		square,
+	},
+}
+
+circle.Draw(&photoshop.Drawer{})
+square.Draw(&photoshop.Drawer{})
+// or
+layer.Draw(&photoshop.Drawer{})
+```
+### Bridge
+- Tách 1 class lớp thành 2 phần interface và reprensentation để 2 phần này không bị phụ thuộc vào nhau và có thể được phát triển song song
+- **Vấn đề**: Giả sử chúng ta cần xây dựng 1 package UI hỗ trợ vẽ nhiều hình dạng trên màn hình bằng cả 2 công nghệ rendering direct2d và opengl. Trong trường hợp này là vẽ hình tròn dùng cả 2 công nghệ. Ta tách struct Circle khỏi phần drawing
+```go
+type Circle struct {
+  DrawingContext drawer
+  Center Point
+  Radius float64
+}
+
+func (circle *Circle) Draw() error {
+  rect := Rect{
+    Location: Point{
+      X: circle.Center.X - circle.Radius,
+      Y: circle.Center.Y - circle.Radius,
+    },
+    Size: Size{
+      Width: 2 * circle.Radius,
+      Height: 2 * circle.Radius,
+    }
+  }
+  return circle.DrawingContext.DrawEllipseInRect(rect)
+}
+
+type Drawer interface {
+  DrawEllipseInRect(Rect) error
+}
+
+// OpenGL drawer
+type OpenGL struct{}
+// DrawEllipseInRect draws an ellipse in rectangle
+func (gl *OpenGL) DrawEllipseInRect(r Rect) error {
+	fmt.Printf("OpenGL is drawing ellipse in rect %v", r)
+	return nil
+}
+
+// Direct2D drawer
+type Direct2D struct{}
+
+// DrawEllipseInRect draws an ellipse in rectangle
+func (d2d *Direct2D) DrawEllipseInRect(r Rect) error {
+	fmt.Printf("Direct2D is drawing ellipse in rect %v", r)
+	return nil
+}
+
+// usage
+openGL := &uikit.OpenGL{}
+direct2D := &uikit.Direct2D{}
+
+circle := &uikit.Circle{
+	Center: uikit.Point{X: 100, Y: 100},
+	Radius: 50,
+}
+
+circle.DrawingContext = openGL
+circle.Draw()
+
+circle.DrawingContext = direct2D
+circle.Draw()
+```
+
+### Proxy
+- Mục đích
+  - Kiểm soát quyền truy suất các phương thức của đối tượng
+  - Bổ xung thêm chức năng trước khi thực thi phương thức gốc
+  - Tạo ra đối tượng mới có chức năng cao hơn đối tượng ban đầu 
+  - Giảm chi phí  khi có nhiều truy cập vào đối tượng có chi phí khởi tạo ban đầu lớn
+
+```go
+type Image interface {
+	display()
+}
+
+type HighResolutionImage struct {
+	imageFilePath string
+}
+
+type ImageProxy struct {
+	imageFilePath string
+	realImage     Image
+}
+
+func (this *HighResolutionImage) loadImage(path string) {
+	// load image from disk into memory
+	// this is a heavy and costly operation
+	fmt.Printf("load image %s from disk\n", path)
+}
+
+func (this *HighResolutionImage) display() {
+	this.loadImage(this.imageFilePath)
+	fmt.Printf("display high resolution image\n")
+}
+
+func (this *ImageProxy) display() {
+	this.realImage = &HighResolutionImage{imageFilePath: this.imageFilePath}
+	this.realImage.display()
+}
+
+func NewImageProxy(path string) Image {
+	return &ImageProxy{imageFilePath: path}
+}
+
+// usage
+
+highResolutionImage := NewImageProxy("sample/img1.png")
+// the realImage won't be loaded until user calls display
+// later
+highResolutionImage.display()
+
+```
+#### Reference: https://www.oodesign.com/proxy-pattern.html
 
