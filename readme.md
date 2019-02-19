@@ -9,7 +9,7 @@
 - https://www.oodesign.com/proxy-pattern.html
 
 ### Design pattern là gì:
-- **Định nghĩa**: Là  giải pháp tổng thể cho những vấn đề phổ biến mà chúng ta hay găp đi lặp lại trong thiết kế phần mềm. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
+- **Định nghĩa**: Là giải pháp tổng thể cho những vấn đề phổ biến mà chúng ta hay gặp phải. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
 
 - **Ưu điểm**:
   -   **Code readability**: giúp chúng ta viết code dễ hiểu hơn bằng việc sử dụng những tên biến liên quan đến những gì chúng ta đang thực hiện
@@ -45,7 +45,7 @@
   ### Singleton
   - **Các ứng dụng**:
     - Chúng ta muốn sử dụng lại kết nối đến database khi truy vấn
-    - Khi chúng ta mở một kết nối SSH đến một server để thực hiện một số công việc và chúng ta không muốn mở một kết nối mà sử dụng lại kết nối trước đó
+    - Khi chúng ta mở một kết nối SSH đến một server để thực hiện một số công việc và chúng ta không muốn mở một kết nối khác mà sử dụng lại kết nối trước đó
     - Khi chúng ta cần hạn chế sự truy cập đến một vài biến số, chúng ta sử dụng mẫu singleton là trung gian để truy cập biến này
     
 ```go
@@ -495,4 +495,106 @@ highResolutionImage.display()
 
 ```
 #### Reference: https://www.oodesign.com/proxy-pattern.html
+---
+## Behavioural Patterns
+### Observer
+- Gồm 2 thành phần chính là Subject và Observer
+- Tạo mối liên hệ one-to-many giữa subject và các observer với nhau(chẳng hạn 1 subject sẽ có thuộc tính là một mảng bao gồm nhiều observer) nên khi trạng thái của subject thay đổi, tất cả các observer liên kết với subject này sẽ được thông báo và tự động cập nhật
+- sơ đồ: 
 
+![I'm an inline-style link](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Observer_w_update.svg/500px-Observer_w_update.svg.png)
+- Ví dụ: Giả sử chúng ta có 1 kênh youtube và mối khi chúng ta release 1 video mới, các subscriber đều được thông báo về thông tin của video mới này
+```go
+type YoutubeChannel { // YoutubeChannel là Subject
+  subscribers []Subscriber // còn Subscriber là Observer
+}
+
+func (yt *YoutubeChannel) ReleaseNewVideo(video Video) {
+  for _, subscriber := range subscribers {
+    subscriber.update(video)
+  }
+}
+// somewhere
+ytChannel.ReleaseNewVideo(Video{title: "Avatar"})
+
+```
+
+- Code mẫu:
+
+```go
+type Observer interface {
+	update(interface{})
+}
+
+type Subject interface {
+	registerObserver(obs Observer)
+	removeObserver(obs Observer)
+	notifyObservers()
+}
+
+type Video struct {
+	title string
+}
+
+// YoutubeChannel is a concrete implementation of Subject interface
+type YoutubeChannel struct {
+	Observers []Observer
+	NewVideo  *Video
+}
+
+func (yt *YoutubeChannel) registerObserver(obs Observer) {
+	yt.Observers = append(yt.Observers, obs)
+}
+
+func (yt *YoutubeChannel) removeObserver(obs Observer) {
+	//
+}
+
+// notify to all observers when a new video is released
+func (yt *YoutubeChannel) notifyObservers() {
+	for _, obs := range yt.Observers {
+		obs.update(yt.NewVideo)
+	}
+}
+
+func (yt *YoutubeChannel) ReleaseNewVideo(video *Video) {
+	yt.NewVideo = video
+	yt.notifyObservers()
+}
+
+// UserInterface is a concrete implementation of Observer interface
+type UserInterface struct {
+	UserName string
+	Videos   []*Video
+}
+
+func (ui *UserInterface) update(video interface{}) {
+	ui.Videos = append(ui.Videos, video.(*Video))
+	fmt.Printf("UI %s - Video: '%s' has just been released\n", ui.UserName, video.(*Video).title)
+}
+
+func NewUserInterface(username string) Observer {
+	return &UserInterface{UserName: username, Videos: make([]*Video, 0)}
+}
+
+// usage
+
+func main() {
+	var ytChannel Subject = &YoutubeChannel{}
+	ui1 := NewUserInterface("Bob")
+	ui2 := NewUserInterface("Peter")
+	ytChannel.registerObserver(ui1)
+	ytChannel.registerObserver(ui2)
+	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avatar 2 trailer"})
+	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avengers Endgame trailer"})
+}
+
+```
+### Result
+```
+UI Bob - Video: 'Avatar 2 trailer' has just been released
+UI Peter - Video: 'Avatar 2 trailer' has just been released
+UI Bob - Video: 'Avengers Endgame trailer' has just been released
+UI Peter - Video: 'Avengers Endgame trailer' has just been released
+
+```
