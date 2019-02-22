@@ -6,10 +6,10 @@
 - [Evaluating the GO Programming Language with Design Patterns PDF](https://ecs.victoria.ac.nz/foswiki/pub/Main/TechnicalReportSeries/ECSTR11-01.pdf)
 - [Tutorials · Software adventures and thoughts](http://blog.ralch.com/tutorial/)
 - [Software design pattern - Wikipedia](https://en.wikipedia.org/wiki/Software_design_pattern)
-- https://www.oodesign.com/proxy-pattern.html
+- [Guru design pattern](https://refactoring.guru/design-patterns)
 
 ### Design pattern là gì:
-- **Định nghĩa**: Là giải pháp tổng thể cho những vấn đề phổ biến mà chúng ta hay gặp phải. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
+- **Định nghĩa**: Là giải pháp tổng quát cho những vấn đề mà lập trình viên hay gặp phải. Design pattern không thể được chuyển đổi trực tiếp thành code mà nó chỉ là một khuôn mẫu cho một vấn đề cần được giải quyết
 
 - **Ưu điểm**:
   -   **Code readability**: giúp chúng ta viết code dễ hiểu hơn bằng việc sử dụng những tên biến liên quan đến những gì chúng ta đang thực hiện
@@ -23,26 +23,33 @@
 ### Phân loại
 - #### Creational pattern
     
-    | Pattern | Mô tả | Status |
-    |:-------:|:----------- |:------:|
-    | [Singleton]( #Singleton) | Chỉ duy nhất một đối tượng của một type bất kì được khởi tạo trong suốt quá trình hoạt động của một chương trình | ✔ |
-    | [Builder](#Builder) | Tách biệt phần construction của một đối tượng phức tạp khỏi phần representation của nó để các tiến trình construction giống nhau có thể tạo ra các representation khác nhau | ✔ |
-    | [Factory Method](#Factory-method) | Sứ dụng trung gian là ``factory`` để khởi tạo các đối tượng có liên quan đến nhau| ✔ |
-    | [Object Pool]() | Khởi tạo và quản lý một nhóm các đối tượng cùng kiểu dữ liệu | ✘ |
-    | [Prototype]() | Sử dụng clone cho các đối tượng giống nhau để tránh việc khởi tạo lại đối tượng | ✘ |
-    
+    | Pattern |
+    |:-------:|
+    | [Singleton]( #Singleton) |
+    | [Builder](#Builder) |
+    | [Factory Method](#Factory-method) |
+
+- #### Behavioral pattern
+ 	| Pattern |
+  |:-------:|
+  | [Observer](#Observer) |
+  | [Strategy](#Strategy-pattern) |
+  | [Iterator](#Iterator-pattern) |
+  | [State](#State-pattern) |
     
 - #### Structural pattern
-    | Pattern | Mô tả | Status |
-    |:-------:|:----------- |:------:|
-    | [Adapter](#Adapter) | Cho phép các interface không liên quan đến nhau có thể làm việc cùng nhau  | ✔ |
-    | [Bridge](#Bridge) | Tách 1 class lớp thành 2 phần interface và reprensentation để 2 phần này không bị phụ thuộc vào nhau và có thể được phát triển song song | ✔ |
-    | [Composite](#Composite) |cho phép tương tác với tất cả các đối tượng tương tự nhau giống như là 1 đối tượng đơn hoặc 1 nhóm các đối tượng | ✔ |
-     | [Proxy](#Proxy) | Cung cấp một đại diện cho một đối tượng để điều khiển việc truy nhập đối tượng đó | ✔ |
-- #### Behavioral pattern
+    | Pattern |
+    |:-------:|
+    | [Adapter](#Adapter) |
+    | [Bridge](#Bridge) |
+    | [Composite](#Composite) |
+    | [Proxy](#Proxy) |
 ---
   
   ### Singleton
+
+ Chỉ duy nhất một đối tượng của một type bất kì được khởi tạo trong suốt quá trình hoạt động của một chương trình
+
   - **Các ứng dụng**:
     - Chúng ta muốn sử dụng lại kết nối đến database khi truy vấn
     - Khi chúng ta mở một kết nối SSH đến một server để thực hiện một số công việc và chúng ta không muốn mở một kết nối khác mà sử dụng lại kết nối trước đó
@@ -67,129 +74,128 @@ func GetDBConnection(config *mysql.Config) *db.Connection {
 - **Lưu ý**:  Là mấu thiết kế phổ biến nhất nhưng đôi khi bị lạm dụng. Nên tránh việc sử dụng mẫu singleton vì khiến cho việc test cụ thể là việc tạo mock/stub trở nên khó khăn hơn
 
 ### Builder
--  Nhiệm vụ của nó là không chỉ khởi tạo đối tượng mà còn thiết lập giá trị trước rồi truyền vào đối tượng. Hay nói cách khác, nó tách biệt phần construction của một đối tượng phức tạp khỏi phần representation (thể hiện) của nó để các tiến trình construction giống nhau có thể tạo ra các thể hiện khác nhau.
-
-* Sơ đồ tạo mẫu thiết kế builder
-![332b7bd4.png](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/uml-of-builedr.jpg)
-- Các thành phần:
-    - **Builder**: định nghĩa một lớp trừu tượng (abstract class) để tạo ra một hoặc nhiều phần của đối tượng
-    - **ConcreateBuilder**: Đây là thành phần triển khai, cụ thể hóa các lớp trừu tượng cho để tạo ra các thành phần và tập hợp các thành phần đó với nhau. Nó sẽ xác định và nắm giữ các thể hiện mà nó tạo ra. Đồng thời nó cũng cung cấp phương thức để trả các các thể hiện mà nó đã tạo ra trước đó.
-
-     - **Product** :Đại diện cho đối tượng phức tạp phải tạo ra.
-
-     - **Director**: Khởi tạo đối tượng phức tạp sử dụng Builder Interface
-
-- Ví dụ: Bạn cần encode một tập dữ liệu nào đó dưới dạng XML hoặc JSON để có thể truyền đến các máy khác thông qua internet
-
-###
+-  Có thể tạo ra nhiều biến thể khác nhau cho cùng một đối tượng 
+- Ví dụ:
+	Có 1 anh chàng nọ đang làm việc trong một team phát triển các hệ thống cho một ngân hàng và anh ta được giao nhiệm vụ cần tạo một kiểu dữ liệu BankAccout để chứa thông tin các khách đã mở tài khoản tại ngân hàng này
 ```go
-// Message is Product in builder design pattern
-type Mesage struct {
-  Body []byte
-  Format string
+type BankAccount struct {
+	ownerName string
+	ownerIdentificationNumber uint64
+	balance int64
 }
 
-// MessageBuilder is the interface that every concrete implementation should obey
-type MessageBuilder interface  {
-	SetRecipient(recipient string)
-	SetText(text string)
-	Message() (*Message, error)
+func NewBankAccount(ownerName string, idNo uint64, balance int64) {
+	return &BankAccount{ownerName, idNo, balance}
 }
-
-type OriginalMessage struct {
-  messageRecipient string
-	messageText      string
-}
-// JSON Message Builder is concrete builder
-type JSONMessageBuilder struct {
-  OriginalMessage
-}
-
-type XMLMessageBuilder struct {
-  OriginalMessage
-}
-
-
-func (this *OriginalMessage) SetRecipient(recipient string) {
-	this.messageRecipient = recipient
-}
-
-func (this *OriginalMessage) SetText(text string) {
-  this.messageText = text
-}
-
-func (b *JSONMessageBuilder) Message() (*Message, error) {
-	m := make(map[string]string)
-	m["recipient"] = b.messageRecipient
-	m["message"] = b.messageText
-
-	data, err := json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Message{Body: data, Format: "JSON"}, nil
-}
-
-func NewJSONMsgBuilder() *JSONMessageBuilder {
-	return &JSONMessageBuilder{&OriginalMessage{}}
-}
-
-func (b *XMLMessageBuilder) Message() (*Message, error) {
-	type XMLMessage struct {
-		Recipient string `xml:"recipient"`
-		Text      string `xml:"body"`
-	}
-
-	m := XMLMessage{
-		Recipient: b.messageRecipient,
-		Text:      b.messageText,
-	}
-
-	data, err := xml.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Message{Body: data, Format: "XML"}, nil
-}
-
-func NewXMLMsgBuilder() *XMLMessageBuilder {
-	return &XMLMessageBuilder{&OriginalMessage{}}
-}
-
-// Sender is the Director in Builder Design Pattern
-type EmailSender struct{}
-
-// Build a concrete message via MessageBuilder
-func (s *Sender) BuildWelcomeEmailMsg(builder MessageBuilder, email string) (*Message, error) {
-  builder.SetText(fmt.Sprintf("welcome %s ", email))
-  builder.SetRecipient(email)
-  return  builder.Message()
-}
-
-// usage
-sender := &EmailSender{}
-recipient := "johndoe@gmail.com"
-
-jsonMsg, _ := sender.BuildWelcomeMsg(NewJSONMsgBuilder(), recipient)
-xmlMsg, _ := sender.BuildWelcomeMsg(NewXMLMsgBuilder(), recipient)
-
-
 ```
--  Ưu điểm:
-    - Ẩn các logic phức tạp trong quá trình xây dựng đối tượng đối với người dùng
-    - Người dùng có thể tùy ý thêm mới 1 builder mới mà không cần phải viết lại quá nhiều code
-- Nhược điểm:
-  - Phải viết builder cho từng class
-  - Sự thay đổi nhỏ trong Interface sẽ ảnh hưởng đến toàn bộ các builder
+Rất dễ dàng để mở một tài khoản
+```go
+var account BankAccount = NewBankAccount("Tuan", 123456789, 10000);
+```
+tuy nhiên đời không như mơ, Sếp lớn xỉ vả anh ta vì kiểu BankAccout thiếu chi nhánh ngân hàng và tỉ lệ lãi suất. Thế là anh ta lại hớt hải chỉnh sủa lại
+```go
+type BankAccount struct {
+	ownerName string
+	ownerIdentificationNumber uint64
+	balance int64
+	interestRate float64 // ti suat
+	branch string // chi nhanh
+}
 
-#### Reference: [Desing Patterns in Golang: Builder · Software adventures and thoughts](http://blog.ralch.com/tutorial/design-patterns/golang-builder/)
+func NewBankAccount(ownerName string, idNo uint64, balance int64, interestRate float64, branch string) {
+	return &BankAccount{ownerName, idNo, balance, interestRate, branch}
+}
+```
+Một ngừời khác sử dụng code của anh ta viết để thực hiện task của mình và anh ta đã sử dụng như sau
+```go
+var account BankAccount = NewBankAccount("Tuan",1000, 123456789, , 0.8, "Sai Gon");
+```
+anh này đã vô tình đổi số CMND(123456789), ra sau số dư(1000) và khiến ngân hàng thất thoát tiền. anh ta vô tình nhưng compiler không phát hiện ra vì cả 2 đều có kiểu dữ liệu uint64 và int64. Anh này đã đổ lỗi cho cho người đã thiết kế kiểu dữ liệu BankAccount chính là anh chàng trước đó. 
+
+- Cách giải quyết được đặt ra:
+	- Tạo các setter: Tuy nhiên người dùng đôi khi sẽ quên gọi các setter này
+
+Anh chàng bị sếp trừ lương và quá uất ức anh sử dụng bí kíp design pattern Builder
+```go
+type bankAccount struct {
+	ownerName            string
+	identificationNumber uint64
+	branch               string
+	balance              int64
+} 
+
+type BankAccount interface {
+	WithDraw(amt uint64)
+	Deposit(amt uint64)
+	GetBalance() uint64
+}
+
+type BankAccountBuilder interface {
+	WithOwnerName(name string) BankAccountBuilder
+	WithOwnerIdentity(identificationNumber uint64) BankAccountBuilder
+	AtBranch(branch string) BankAccountBuilder
+	OpeningBalance(balance uint64) BankAccountBuilder
+	Build() BankAccount
+}
+
+func (acc *bankAccount) WithDraw(amt uint64) {
+
+}
+
+func (acc *bankAccount) Deposit(amt uint64) {
+
+}
+
+func (acc *bankAccount) GetBalance() uint64 {
+	return 0
+}
+
+func (acc *bankAccount) WithOwnerName(name string) BankAccountBuilder {
+	acc.ownerName = name
+	return acc
+}
+
+func (acc *bankAccount) WithOwnerIdentity(identificationNumber uint64) BankAccountBuilder {
+	acc.identificationNumber = identificationNumber
+	return acc
+}
+
+func (acc *bankAccount) AtBranch(branch string) BankAccountBuilder {
+	acc.branch = branch
+	return acc
+}
+
+func (acc *bankAccount) OpeningBalance(balance uint64) BankAccountBuilder {
+	acc.balance = int64(balance)
+	return acc
+}
+
+func (acc *bankAccount) Build() BankAccount {
+	return acc
+}
+
+func NewBankAccountBuilder() BankAccountBuilder {
+	return &bankAccount{}
+}
+
+func main() {
+	account := NewBankAccountBuilder().
+		WithOwnerName("Tuan").
+		WithOwnerIdentity(123456789).
+		AtBranch("Sai Gon").
+		OpeningBalance(1000).Build()
+
+	account.Deposit(10000)
+	account.WithDraw(50000)
+}
+```
+Bằng việt sử dụng builder pattern, code của anh chàng tuy có hơi dai dòng hơn nhưng đã khiến code trở nên dễ đọc hơn rất nhiều
+
+#### Reference: https://dzone.com/articles/design-patterns-the-builder-pattern
 
 ###  Factory method
 - Tạo một đối tượng mà không cần thiết chỉ ra một cách chính xác lớp nào sẽ được tạo bằng cách nhóm các đối tượng liên quan đến nhau và sử dụng 1 đối tượng trung gian để khởi tạo đối tượng cần tạo
-- ví dụ: chúng ta sẽ tạo các phương thức thanh toán cho 1 shop bằng factory method
-- 
+- ví dụ: chúng ta sẽ tạo các phương thức thanh toán cho 1 shop bằng factory method, hình thức thanh toán có thể bằng tiền mặt hoặc bằng thẻ debit
 ```go
 type PaymentMethod interface {
   Pay(amount float32) string
@@ -229,6 +235,290 @@ payment := GetPaymentMethod(Cash)
 payment.Pay(50)
 
 ```
+---
+## Behavioural Patterns
+### Observer
+- Tạo mối liên hệ one-to-many giữa subject và các observer với nhau(chẳng hạn 1 subject sẽ có thuộc tính là một mảng bao gồm nhiều observer) nên khi trạng thái của subject thay đổi, tất cả các observer liên kết với subject này sẽ được thông báo và tự động cập nhật
+- Gồm 2 thành phần chính là **Subject** và **Observer**
+- sơ đồ: 
+
+![I'm an inline-style link](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Observer_w_update.svg/500px-Observer_w_update.svg.png)
+- Ví dụ: Giả sử chúng ta có 1 kênh youtube và mối khi chúng ta release 1 video mới, các subscriber đều được thông báo về thông tin của video mới này. Ta coi youtube channel là 1 subject và những subscriber trong channel này là các observer. Khi các observer nhận được thông tin về video mới, app của các subscriber sẽ chịu trách nhiệm update lại UI để người dùng có thể click vào những video vừa được đăng tải
+
+- Code:
+
+```go
+type Observer interface {
+	update(interface{})
+}
+
+type Subject interface {
+	registerObserver(obs Observer)
+	removeObserver(obs Observer)
+	notifyObservers()
+}
+
+type Video struct {
+	title string
+}
+
+// YoutubeChannel is a concrete implementation of Subject interface
+type YoutubeChannel struct {
+	Observers []Observer
+	NewVideo  *Video
+}
+
+func (yt *YoutubeChannel) registerObserver(obs Observer) {
+	yt.Observers = append(yt.Observers, obs)
+}
+
+func (yt *YoutubeChannel) removeObserver(obs Observer) {
+	//
+}
+
+// notify to all observers when a new video is released
+func (yt *YoutubeChannel) notifyObservers() {
+	for _, obs := range yt.Observers {
+		obs.update(yt.NewVideo)
+	}
+}
+
+func (yt *YoutubeChannel) ReleaseNewVideo(video *Video) {
+	yt.NewVideo = video
+	yt.notifyObservers()
+}
+
+// UserInterface is a concrete implementation of Observer interface
+type UserInterface struct {
+	UserName string
+	Videos   []*Video
+}
+
+func (ui *UserInterface) update(video interface{}) {
+	ui.Videos = append(ui.Videos, video.(*Video))
+	for video := range ui.Videos {
+		View.AddChildNode(NewVideoComponent(video))
+	}
+	fmt.Printf("UI %s - Video: '%s' has just been released\n", ui.UserName, video.(*Video).title)
+}
+
+func NewUserInterface(username string) Observer {
+	return &UserInterface{UserName: username, Videos: make([]*Video, 0)}
+}
+
+// usage
+
+func main() {
+	var ytChannel Subject = &YoutubeChannel{}
+	ui1 := NewUserInterface("Bob")
+	ui2 := NewUserInterface("Peter")
+	ytChannel.registerObserver(ui1)
+	ytChannel.registerObserver(ui2)
+	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avatar 2 trailer"})
+	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avengers Endgame trailer"})
+}
+
+```
+### Result
+```
+UI Bob - Video: 'Avatar 2 trailer' has just been released
+UI Peter - Video: 'Avatar 2 trailer' has just been released
+UI Bob - Video: 'Avengers Endgame trailer' has just been released
+UI Peter - Video: 'Avengers Endgame trailer' has just been released
+
+```
+## Strategy pattern
+- Là mẫu thiết kế cho phép chọn thuật toán trong 1 nhóm các thuật toán liên quan đến nhau ngay tại lúc chương trình đang chạy(at runtime) để thực hiện một hoạt động nào đó
+
+- Giả sử: chúng ta cần xây dựng 1 thư viện để mã hóa một đoạn tin bằng các phương pháp asymmetric chúng ta có thể sử dụng 1 trong 2 thuật toán sau: RSA hoặc Elliptic curve
+```go
+package encryption
+
+type AsymEncryptionStrategy interface {
+	Encrypt(data interface{}) (byte[] cipher, error)
+}
+
+type EllipticCurvestrategy struct {} 
+type RSA struct {}
+
+func (strat *EllipticCurvestrategy) Encrypt(data interface{}) (byte[] cipher, error) {
+	// some complex math
+	...
+	return cipher, err 
+}
+
+func (strat *RSAstrategy) Encrypt(data interface{}) (byte[] cipher, error) {
+	// some complex math
+	...
+	return cipher, err 
+} 
+
+func encryptMessage(msg string, strat AsymEncryptionStrategy) (byte[] cipher, error) {
+	return strat.Encrypt(msg)
+}
+
+// usage
+msg := "this is a confidential message"
+cipher, err := encryptMessage(msg, encryption.EllipticCurvestrategy)
+cipher, err := encryptMessage(msg, encryption.RSAstrategy)
+```
+## Iterator pattern
+- Mẫu này được sử dụng để truy cập vào các phần tử của 1 collection(array, map, set) một cách tuần tự mà không cần phải hiểu biết về nó.
+- Iterate 1 collection sử dụng callback:
+```go
+func iterateEvenNumbers(max int, cb func(n int) error) error {
+    if max < 0 {
+        return fmt.Errorf("'max' is %d, must be >= 0", max)
+    }
+    for i := 2; i <= max; i += 2 {
+        err := cb(i)
+        if err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+func printEvenNumbers(max int) {
+    err := iterateEvenNumbers(max, func(n int) error {
+        fmt.Printf("%d\n", n)
+        return nil
+    })
+    if err != nil {
+        log.Fatalf("error: %s\n", err)
+    }
+}
+
+printEvenNumbers(10)
+```
+> Pattern này được sử dụng trong go standard library: [filepath.Walk](https://golang.org/pkg/path/filepath/#Walk)
+- Iterate với `Next()` 
+```go
+// EvenNumberIterator generates even numbers
+type EvenNumberIterator struct {
+    max       int
+    currValue int
+    err       error
+}
+
+// NewEvenNumberIterator creates new number iterator
+func NewEvenNumberIterator(max int) *EvenNumberIterator {
+    var err error
+    if max < 0 {
+        err = fmt.Errorf("'max' is %d, should be >= 0", max)
+    }
+    return &EvenNumberIterator{
+        max:       max,
+        currValue: 0,
+        err:       err,
+    }
+}
+
+// Next advances to next even number. Returns false on end of iteration.
+func (i *EvenNumberIterator) Next() bool {
+    if i.err != nil {
+        return false
+    }
+    i.currValue += 2
+    return i.currValue <= i.max
+}
+
+// Value returns current even number
+func (i *EvenNumberIterator) Value() int {
+    if i.err != nil || i.currValue > i.max {
+        panic("Value is not valid after iterator finished")
+    }
+    return i.currValue
+}
+
+// Err returns iteration error.
+func (i *EvenNumberIterator) Err() error {
+    return i.err
+}
+
+func printEvenNumbers(max int) {
+	iter := NewEvenNumberIterator(max)
+	for iter.Next() {
+		fmt.Printf("n: %d\n", iter.Value())
+	}
+	if iter.Err() != nil {
+		log.Fatalf("error: %s\n", iter.Err())
+	}
+}
+
+func main() {
+	fmt.Printf("Even numbers up to 8:\n")
+	printEvenNumbers(8)
+	fmt.Printf("Even numbers up to 9:\n")
+	printEvenNumbers(9)
+	fmt.Printf("Error: even numbers up to -1:\n")
+	printEvenNumbers(-1)
+}
+```
+- Pattern này được sử dụng nhiều trong go standard library
+	- [Rows.Next](https://golang.org/pkg/database/sql/#Rows.Next):  iterate các kết quả thu được từ SQL SELECT statement
+	- [Scanner.Scan](https://golang.org/pkg/database/sql/#Rows.Next): iterate text
+	- [Decoder.Token](https://golang.org/pkg/encoding/xml/#Decoder.Token): XML parsing
+	- [Reader.Read](https://golang.org/pkg/encoding/csv/#Reader.Read): CSV reader
+## References: https://blog.kowalczyk.info/article/1Bkr/3-ways-to-iterate-in-go.html
+
+## State pattern
+- Mỗi đối tượng có 1 trạng thái gắn với nó và trạng thái có thể được thay đổi thông qua `SetState` method
+- Ví dụ: Giả sử điện thoại có 2 trạng thái nhắc nhở: Im lặng hoặc Rung
+- code
+```go
+type MobileAlertState interface {
+	alert()
+}
+
+type AlertStateContext struct {
+	currentState MobileAlertState
+}
+
+func NewAlertStateContext() *AlertStateContext {
+	return &AlertStateContext{currentState: &Vibration{}}
+}
+
+func (ctx *AlertStateContext) SetState(state MobileAlertState) {
+	ctx.currentState = state
+}
+
+func (ctx *AlertStateContext) Alert() {
+	ctx.currentState.alert()
+}
+
+type Vibration struct{}
+
+func (v *Vibration) alert() {
+	fmt.Println("vibrating....")
+}
+
+type Silence struct{}
+
+func (s *Silence) alert() {
+	fmt.Println("silent ....")
+}
+
+func main() {
+	stateContext := NewAlertStateContext()
+	stateContext.Alert()
+	stateContext.Alert()
+	stateContext.Alert()
+	stateContext.SetState(&Silence{})
+	stateContext.Alert()
+	stateContext.Alert()
+	stateContext.Alert()
+}
+
+// result
+vibrating....
+vibrating....
+vibrating....
+silent ....
+silent ....
+silent ....
+```
+### Reference: https://www.geeksforgeeks.org/state-design-pattern/
 ---
 ## Structural Patterns
 ### Adapter
@@ -495,106 +785,8 @@ highResolutionImage.display()
 
 ```
 #### Reference: https://www.oodesign.com/proxy-pattern.html
----
-## Behavioural Patterns
-### Observer
-- Gồm 2 thành phần chính là Subject và Observer
-- Tạo mối liên hệ one-to-many giữa subject và các observer với nhau(chẳng hạn 1 subject sẽ có thuộc tính là một mảng bao gồm nhiều observer) nên khi trạng thái của subject thay đổi, tất cả các observer liên kết với subject này sẽ được thông báo và tự động cập nhật
-- sơ đồ: 
 
-![I'm an inline-style link](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Observer_w_update.svg/500px-Observer_w_update.svg.png)
-- Ví dụ: Giả sử chúng ta có 1 kênh youtube và mối khi chúng ta release 1 video mới, các subscriber đều được thông báo về thông tin của video mới này
-```go
-type YoutubeChannel { // YoutubeChannel là Subject
-  subscribers []Subscriber // còn Subscriber là Observer
-}
 
-func (yt *YoutubeChannel) ReleaseNewVideo(video Video) {
-  for _, subscriber := range subscribers {
-    subscriber.update(video)
-  }
-}
-// somewhere
-ytChannel.ReleaseNewVideo(Video{title: "Avatar"})
 
-```
+	
 
-- Code mẫu:
-
-```go
-type Observer interface {
-	update(interface{})
-}
-
-type Subject interface {
-	registerObserver(obs Observer)
-	removeObserver(obs Observer)
-	notifyObservers()
-}
-
-type Video struct {
-	title string
-}
-
-// YoutubeChannel is a concrete implementation of Subject interface
-type YoutubeChannel struct {
-	Observers []Observer
-	NewVideo  *Video
-}
-
-func (yt *YoutubeChannel) registerObserver(obs Observer) {
-	yt.Observers = append(yt.Observers, obs)
-}
-
-func (yt *YoutubeChannel) removeObserver(obs Observer) {
-	//
-}
-
-// notify to all observers when a new video is released
-func (yt *YoutubeChannel) notifyObservers() {
-	for _, obs := range yt.Observers {
-		obs.update(yt.NewVideo)
-	}
-}
-
-func (yt *YoutubeChannel) ReleaseNewVideo(video *Video) {
-	yt.NewVideo = video
-	yt.notifyObservers()
-}
-
-// UserInterface is a concrete implementation of Observer interface
-type UserInterface struct {
-	UserName string
-	Videos   []*Video
-}
-
-func (ui *UserInterface) update(video interface{}) {
-	ui.Videos = append(ui.Videos, video.(*Video))
-	fmt.Printf("UI %s - Video: '%s' has just been released\n", ui.UserName, video.(*Video).title)
-}
-
-func NewUserInterface(username string) Observer {
-	return &UserInterface{UserName: username, Videos: make([]*Video, 0)}
-}
-
-// usage
-
-func main() {
-	var ytChannel Subject = &YoutubeChannel{}
-	ui1 := NewUserInterface("Bob")
-	ui2 := NewUserInterface("Peter")
-	ytChannel.registerObserver(ui1)
-	ytChannel.registerObserver(ui2)
-	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avatar 2 trailer"})
-	ytChannel.(*YoutubeChannel).ReleaseNewVideo(&Video{title: "Avengers Endgame trailer"})
-}
-
-```
-### Result
-```
-UI Bob - Video: 'Avatar 2 trailer' has just been released
-UI Peter - Video: 'Avatar 2 trailer' has just been released
-UI Bob - Video: 'Avengers Endgame trailer' has just been released
-UI Peter - Video: 'Avengers Endgame trailer' has just been released
-
-```
